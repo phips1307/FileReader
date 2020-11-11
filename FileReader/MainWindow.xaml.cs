@@ -37,6 +37,14 @@ namespace FileReader
             {
 
             }
+            catch (System.IO.DirectoryNotFoundException)
+            {
+                MessageBox.Show("Path could not be found!","Error",MessageBoxButton.OK,MessageBoxImage.Error);
+            }
+            catch (System.ArgumentException)
+            {
+                MessageBox.Show("This path has already been readed!","Error", MessageBoxButton.OK, MessageBoxImage.Error);
+            }
         }
 
         private void ReadAndCompare()
@@ -45,6 +53,7 @@ namespace FileReader
             try
             {
                 string str = "";
+                int i = 0;
 
                 DirectoryInfo info = new DirectoryInfo(Path.Text);
                 FileInfo[] Files = info.GetFiles("*.*", SearchOption.AllDirectories);
@@ -55,22 +64,30 @@ namespace FileReader
 
                 foreach (KeyValuePair<string, DateTime> pair in FilesAfter)
                 {
+                    
                     if (!FirstFiles.ContainsKey(pair.Key))
                     {
                         str += pair.Key + "\n";
+                        i++;
                     }
                     else if (!(FirstFiles[pair.Key] == pair.Value))
                     {
                         str += pair.Key + "\n";
+                        i++;
                     }
                 }
 
                 Output.Text = str;
                 after.Text = FilesAfter.Count.ToString();
+                OutputCount.Text = i.ToString();
             }
             catch (System.UnauthorizedAccessException)
             {
 
+            }
+            catch (System.IO.DirectoryNotFoundException)
+            {
+                MessageBox.Show("Path could not be found!", "Error", MessageBoxButton.OK, MessageBoxImage.Error);
             }
         }
 
@@ -82,6 +99,15 @@ namespace FileReader
         private void Compare_Click(object sender, RoutedEventArgs e)
         {
             ReadAndCompare();
+        }
+
+        private void Clear_Click(object sender, RoutedEventArgs e)
+        {
+            FirstFiles.Clear();
+            OutputCount.Text = "0";
+            Output.Text = "";
+            first.Text = "0";
+            after.Text = "0";
         }
     }
 }
